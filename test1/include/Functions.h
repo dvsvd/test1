@@ -2,14 +2,13 @@
 
 #include "test1.h"
 #include "Storage.h"
-#include "globals.h"
 
 namespace Operations
 {
 	json ReadData(const std::string& key, std::string& value);
 	json WriteData(const std::string& key, const std::string& value);
 
-	static const std::unordered_map<std::string,
+	const std::unordered_map<std::string,
 		std::function<json(const std::string& key, std::string& value)>> map
 	{
 		std::make_pair("read", ReadData),

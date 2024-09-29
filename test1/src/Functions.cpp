@@ -1,9 +1,10 @@
 #include "Functions.h"
 #include "Logger.h"
+#include "ClientHandler.h"
 #include <exception>
 
 extern Storage storage;
-extern thread_local std::string msg;
+//extern thread_local 
 
 json Operations::ReadData(const std::string& key, std::string& value)
 {
@@ -57,18 +58,5 @@ void Functions::recv_handler(
 	const boost::system::error_code& error,
 	size_t nBytesRead)
 {
-	switch (nBytesRead)
-	{
-	case 0: // Disconnect
-		wcout << L"Client disconnected" << endl;
-		Logger::log("Client disconnected");
-		return;
-	case BUFLEN:
-		msg += buffer_cast<char*>(buf);
-		memset(buffer_cast<char*>(buf), 0, BUFLEN);
-		continue;
-	default:
-		msg += buffer_cast<char*>(buf);
-		break;
-	}
+
 }

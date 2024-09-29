@@ -27,3 +27,5 @@ using std::wcin;
 using std::wcout;
 using std::endl;
 using uint = unsigned int;
+
+inline constexpr size_t BUFLEN = 4096U;

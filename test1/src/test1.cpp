@@ -4,14 +4,18 @@
 #include "test1.h"
 #include "Logger.h"
 #include "Storage.h"
-#include "globals.h"
 #include <memory>
-#include <future>
 
+Storage storage{
+	std::make_pair("key1", "value1"),
+	std::make_pair("key2", "value2"),
+	std::make_pair("key3", "value3"),
+};
 
 /*
 *	TODO:
 *	1) MULTI-CLIENT SERVICE
+*		1.1) create_thread FUNC
 *	2) JSON VALIDATION
 *	3) SEND RESPONSE TO CLIENT
 */
@@ -19,9 +23,6 @@
 int main()
 {
 	Localise();
-	std::string val;
-	char dummy[BUFLEN] = { 0 };
-	mutable_buffer buf = buffer(dummy, BUFLEN);
 	try
 	{
 		io_context actx;
@@ -39,7 +40,7 @@ int main()
 		while(true)
 		{
 			//TODO DEBUG
-			std::future<size_t> f = tcp_socket.async_receive(buf, use_future);
+			tcp_socket.async_receive(buf, use_future);
 			//ioctx.run();
 			size_t nBytesRead = f.get();
 			
