@@ -12,3 +12,8 @@ void ThreadGroup::join_all()
 		t.join();
 	}
 }
+
+void ThreadGroup::create_thread(const std::function<int()>& f)
+{
+	m_threads.push_back(std::thread(f));
+}
