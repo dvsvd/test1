@@ -11,7 +11,10 @@ add_executable (test1 "${SOURCE_DIR}/test1.cpp" "${INCLUDE_DIR}/test1.h"
 	"${SOURCE_DIR}/Functions.cpp" "${INCLUDE_DIR}/Functions.h"
 	"${COMMON_INCLUDE_DIR}/CommonFunctions.h" "${COMMON_SOURCE_DIR}/CommonFunctions.cpp"
 	"${COMMON_INCLUDE_DIR}/Logger.h" "${COMMON_SOURCE_DIR}/Logger.cpp"
-	"${COMMON_INCLUDE_DIR}/CommonIncludes.h" "include/Storage.h" "src/Storage.cpp"   "include/ClientHandler.h" "src/ClientHandler.cpp" "include/ThreadGroup.h" "src/ThreadGroup.cpp")
+	"${COMMON_INCLUDE_DIR}/CommonIncludes.h"
+	"${INCLUDE_DIR}/Storage.h" "${SOURCE_DIR}/Storage.cpp"
+	"${INCLUDE_DIR}/ClientHandler.h" "${SOURCE_DIR}/ClientHandler.cpp"
+	"${INCLUDE_DIR}/TcpServer.h" "${SOURCE_DIR}/TcpServer.cpp")
 target_include_directories(test1 PRIVATE ${BOOST_INCLUDE_DIR} ${INCLUDE_DIR})
 target_link_directories(test1 PRIVATE ${BOOST_LIB_DIR})
 
