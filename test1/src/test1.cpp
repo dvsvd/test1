@@ -6,7 +6,7 @@
 #include "Storage.h"
 #include "TcpServer.h"
 #include "ClientHandler.h"
-#include <memory>
+#include <xutility>
 
 Storage storage{
 	std::make_pair("key1", "value1"),
@@ -16,9 +16,11 @@ Storage storage{
 
 /*
 *	TODO:
-*	1) MULTI-CLIENT SERVICE
+*	1) fix this shit
 *	2) JSON VALIDATION
 *	3) SEND RESPONSE TO CLIENT
+*	ADDITIONAL:
+*	4) NETWORK ERRORS TRY-CATCH
 */
 
 int main()
@@ -26,12 +28,13 @@ int main()
 	Localise();
 	try
 	{
-		TcpServer Serv(3333, 25, std::thread::hardware_concurrency());
-		Serv.Run();
+		std::shared_ptr<TcpServer> Serv = TcpServer::Create(3333, 25, std::thread::hardware_concurrency());
+		Serv->Run();
 	}
 	catch (std::exception& ex)
 	{
-		cout << ex.what() << endl;
+		std::cerr << ex.what() << endl;
 		Logger::error(ex.what());
+		return 1;
 	}
 }

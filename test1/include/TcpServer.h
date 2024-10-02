@@ -4,6 +4,7 @@
 #include <thread>
 #include <unordered_set>
 #include <shared_mutex>
+#include <memory>
 
 using std::string;
 using std::wstring;
@@ -11,16 +12,20 @@ using std::cout;
 using std::wcout;
 using std::endl;
 
-class ClientHandler;
-
 class TcpServer
 {
 public:
+	using element_type = ClientHandler::pointer_type;
+	using pointer_type = std::shared_ptr<TcpServer>;
 	TcpServer(unsigned short port = 3030, size_t maxClients = 25,
 		size_t concurrency = 1,
 		int backlog = tcp::acceptor::max_listen_connections);
+	static pointer_type Create(unsigned short port = 3030, size_t maxClients = 25,
+		size_t concurrency = 1,
+		int backlog = tcp::acceptor::max_listen_connections);
+	void StartAccept();
 	void Run();
-	void Disconnect(const ClientHandler& handler);
+	void Disconnect(const std::shared_ptr<ClientHandler>& handler);
 	~TcpServer();
 private:
 	friend class ClientHandler;
@@ -30,7 +35,7 @@ private:
 	size_t m_max_clients;
 	size_t m_concurrency;
 	std::shared_mutex m_lock;
-	std::unordered_set<ClientHandler> m_handlers;
+	std::unordered_set<element_type> m_handlers;
 	thread_pool m_tp;
 	io_context m_ioctx;
 	io_context::work m_work;

@@ -17,6 +17,8 @@ int main(int argc, char** argv)
 		f.read(buf, fsize);
 		tcp_socket.send(buffer(buf, fsize));
 		cout << "Message sent!" << endl;
+		tcp_socket.shutdown(socket_base::shutdown_both);
+		tcp_socket.close();
 	}
 	catch (std::exception& ex)
 	{

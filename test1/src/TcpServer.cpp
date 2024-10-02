@@ -15,25 +15,39 @@ TcpServer::TcpServer(unsigned short port, size_t maxClients, size_t concurrency,
 	m_concurrency(concurrency)
 {
 	m_acceptor.set_option(socket_base::reuse_address(true));
+	m_acceptor.set_option(socket_base::keep_alive(true));
 	m_acceptor.listen(backlog);
+	StartAccept();
 }
 
-void TcpServer::Run()
+TcpServer::pointer_type TcpServer::Create(unsigned short port, size_t maxClients, size_t concurrency, int backlog)
 {
-	m_acceptor.async_accept(
-		[&](
-			const boost::system::error_code& ec, // Result of operation.
-			boost::asio::ip::tcp::socket s // On success, the newly accepted socket.
-			)
+	pointer_type inst = std::make_shared<TcpServer>(port, maxClients, concurrency, backlog);
+	inst->StartAccept();
+	return inst;
+}
+
+void TcpServer::StartAccept()
+{
+	ClientHandler::pointer_type ptr = std::make_shared<ClientHandler>(std::ref(m_ioctx), std::ref(*this));
+	m_acceptor.async_accept(ptr->socket(),
+		[this, ptr](const boost::system::error_code& ec)
 		{
 			if (!ec)
 			{
 				std::unique_lock l(m_lock);
-				m_handlers.insert(ClientHandler(std::move(s), *this));
-				cout << "Accepted client";
+				m_handlers.insert(ptr);
+				ptr->start();
+#ifdef _DEBUG
+				cout << "Accepted connection" << endl;
+#endif // _DEBUG
 			}
-		});
-
+			StartAccept();
+		}
+	);
+}
+void TcpServer::Run()
+{
 	for (size_t i = 0; i < m_concurrency; i++)
 	{
 		post(m_tp, std::bind(static_cast<size_t(io_context::*)()>(&io_context::run), &m_ioctx));
@@ -46,11 +60,11 @@ void TcpServer::Run()
 		<< ".\nAccepting connections..."
 		<< endl;
 	cout.clear();
-	m_ioctx.run();
+	//StartAccept();
 	m_tp.join();
 }
 
-void TcpServer::Disconnect(const ClientHandler& handler)
+void TcpServer::Disconnect(const std::shared_ptr<ClientHandler>& handler)
 {
 	std::unique_lock l(m_lock);
 	m_handlers.erase(handler);

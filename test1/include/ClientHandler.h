@@ -4,8 +4,11 @@
 
 class TcpServer;
 
-class ClientHandler {
-	friend struct std::hash<ClientHandler>;
+class ClientHandler : public std::enable_shared_from_this<ClientHandler> {
+public:
+	using pointer_type = std::shared_ptr<ClientHandler>;
+private:
+	friend struct std::hash<pointer_type>;
 	friend bool operator==(const ClientHandler& lhs, const ClientHandler& rhs);
 private:
 	tcp::socket m_s;
@@ -15,20 +18,26 @@ private:
 	char dummy[BUFLEN] = { 0 };
 	mutable_buffer m_buf = buffer(dummy, BUFLEN);
 public:
-	ClientHandler(tcp::socket&& s, TcpServer& serv);
+	using pointer_type = std::shared_ptr<ClientHandler>;
+	ClientHandler(tcp::socket s, TcpServer& serv);
+	ClientHandler(io_context& ctx, TcpServer& serv);
 	ClientHandler() = delete;
 	ClientHandler(const ClientHandler&) = delete;
-	ClientHandler(ClientHandler&&) = default;
+	ClientHandler(ClientHandler&&) noexcept;
 	~ClientHandler();
 
-	static void handle_client(ClientHandler* inst,
+	void start();
+	inline tcp::socket& socket() { return m_s; }
+private:
+	static void handle_client(std::shared_ptr<ClientHandler>,
 		const boost::system::error_code& error,
 		size_t nBytesRead
 	);
+	void do_read();
 };
 
 template <>
-struct std::hash<ClientHandler>
+struct std::hash<ClientHandler::pointer_type>
 {
-	std::size_t operator()(const ClientHandler& key) const noexcept;
+	std::size_t std::hash<ClientHandler::pointer_type>::operator()(const ClientHandler::pointer_type& key) const noexcept;
 };
