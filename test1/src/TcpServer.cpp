@@ -33,8 +33,6 @@ void TcpServer::Run()
 				cout << "Accepted client";
 			}
 		});
-	//Logger::log("Программа приняла соединение с адреса " + tcp_socket.remote_endpoint().address().to_string());
-	//wcout << L"Соединение устано6влено" << endl;
 
 	for (size_t i = 0; i < m_concurrency; i++)
 	{
@@ -48,6 +46,7 @@ void TcpServer::Run()
 		<< ".\nAccepting connections..."
 		<< endl;
 	cout.clear();
+	m_ioctx.run();
 	m_tp.join();
 }
 

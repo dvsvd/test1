@@ -22,7 +22,7 @@ void ClientHandler::handle_client (ClientHandler* inst,
 	{
 	case 0: // Disconnect
 	{
-		post(inst->m_serv.m_work.get_io_context(),
+		post(inst->m_serv.m_ioctx,
 			[&]() mutable { inst->m_serv.Disconnect(*inst); });
 		wcout << L"Client disconnected" << endl;
 		Logger::log("Client disconnected");
