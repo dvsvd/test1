@@ -15,6 +15,9 @@
 #include <Windows.h>
 #endif // WIN32
 
+#define HANDLER_LOCATION \
+  BOOST_ASIO_HANDLER_LOCATION((__FILE__, __LINE__, __func__))
+
 using json = nlohmann::json;
 using namespace boost::asio;
 using namespace boost::asio::ip;
@@ -23,8 +26,10 @@ using std::string;
 using std::wstring;
 using std::cin;
 using std::cout;
+using std::cerr;
 using std::wcin;
 using std::wcout;
+using std::wcerr;
 using std::endl;
 using uint = unsigned int;
 

@@ -6,14 +6,12 @@ ClientHandler::ClientHandler(tcp::socket s, server_ptr_type serv)
 	: m_s(std::move(s)),
 	m_serv(serv)
 {
-	do_read();
 }
 
 ClientHandler::ClientHandler(io_context& ctx, server_ptr_type serv)
 	: m_s(ctx),
 	m_serv(serv)
 {
-	do_read();
 }
 
 ClientHandler::ClientHandler(ClientHandler&& o) noexcept
@@ -35,9 +33,11 @@ void ClientHandler::handle_client(pointer_type inst,
 	{
 		// Handle disconnect
 		post(inst->m_serv.lock()->m_ioctx,
-			[&]() mutable { inst->m_serv.lock()->Disconnect(inst); });
+			[&]() mutable { HANDLER_LOCATION;
+		inst->m_serv.lock()->Disconnect(inst);
 		wcout << L"Client disconnected" << endl;
 		Logger::log("Client disconnected");
+		});
 		return;
 	}
 	switch (nBytesRead)
@@ -65,6 +65,7 @@ void ClientHandler::start()
 
 void ClientHandler::do_read()
 {
+	HANDLER_LOCATION;
 	// Avoid copy construct
 	m_s.async_receive(m_buf, std::bind(&ClientHandler::handle_client,
 		shared_from_this(),

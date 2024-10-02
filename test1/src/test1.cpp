@@ -6,7 +6,7 @@
 #include "Storage.h"
 #include "TcpServer.h"
 #include "ClientHandler.h"
-#include <xutility>
+#include <utility>
 
 Storage storage{
 	std::make_pair("key1", "value1"),
@@ -16,7 +16,6 @@ Storage storage{
 
 /*
 *	TODO:
-*	1) fix this shit
 *	2) JSON VALIDATION
 *	3) SEND RESPONSE TO CLIENT
 *	ADDITIONAL:

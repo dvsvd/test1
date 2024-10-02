@@ -28,10 +28,12 @@ TcpServer::pointer_type TcpServer::Create(unsigned short port, size_t maxClients
 
 void TcpServer::StartAccept()
 {
+	HANDLER_LOCATION;
 	ClientHandler::pointer_type ptr = std::make_shared<ClientHandler>(std::ref(m_ioctx), weak_from_this());
 	m_acceptor.async_accept(ptr->socket(),
 		[this, ptr](const boost::system::error_code& ec)
 		{
+			HANDLER_LOCATION;
 			if (!ec)
 			{
 				std::unique_lock l(m_lock);
@@ -59,12 +61,12 @@ void TcpServer::Run()
 		<< ".\nAccepting connections..."
 		<< endl;
 	cout.clear();
-	//StartAccept();
 	m_tp.join();
 }
 
 void TcpServer::Disconnect(const std::shared_ptr<ClientHandler>& handler)
 {
+	HANDLER_LOCATION;
 	std::unique_lock l(m_lock);
 	m_handlers.erase(handler);
 }
