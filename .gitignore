@@ -2,6 +2,7 @@
 .git/
 out/
 *CMakeFiles/
+_deps/
 
 *.cmake
 # Prerequisites

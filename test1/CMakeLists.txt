@@ -15,8 +15,7 @@ add_executable (test1 "${SOURCE_DIR}/test1.cpp" "${INCLUDE_DIR}/test1.h"
 	"${INCLUDE_DIR}/Storage.h" "${SOURCE_DIR}/Storage.cpp"
 	"${INCLUDE_DIR}/ClientHandler.h" "${SOURCE_DIR}/ClientHandler.cpp"
 	"${INCLUDE_DIR}/TcpServer.h" "${SOURCE_DIR}/TcpServer.cpp" )
-target_include_directories(test1 PRIVATE ${BOOST_INCLUDE_DIR} ${INCLUDE_DIR})
-target_link_directories(test1 PRIVATE ${BOOST_LIB_DIR})
+target_include_directories(test1 PRIVATE ${Boost_INCLUDE_DIRS} ${INCLUDE_DIR})
 
 include(FetchContent)
 
