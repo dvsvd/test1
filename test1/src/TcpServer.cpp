@@ -17,7 +17,6 @@ TcpServer::TcpServer(unsigned short port, size_t maxClients, size_t concurrency,
 	m_acceptor.set_option(socket_base::reuse_address(true));
 	m_acceptor.set_option(socket_base::keep_alive(true));
 	m_acceptor.listen(backlog);
-	StartAccept();
 }
 
 TcpServer::pointer_type TcpServer::Create(unsigned short port, size_t maxClients, size_t concurrency, int backlog)
@@ -29,7 +28,7 @@ TcpServer::pointer_type TcpServer::Create(unsigned short port, size_t maxClients
 
 void TcpServer::StartAccept()
 {
-	ClientHandler::pointer_type ptr = std::make_shared<ClientHandler>(std::ref(m_ioctx), std::ref(*this));
+	ClientHandler::pointer_type ptr = std::make_shared<ClientHandler>(std::ref(m_ioctx), weak_from_this());
 	m_acceptor.async_accept(ptr->socket(),
 		[this, ptr](const boost::system::error_code& ec)
 		{

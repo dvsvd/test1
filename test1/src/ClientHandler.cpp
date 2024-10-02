@@ -2,14 +2,14 @@
 #include "Logger.h"
 #include "TcpServer.h"
 
-ClientHandler::ClientHandler(tcp::socket s, TcpServer& serv)
+ClientHandler::ClientHandler(tcp::socket s, server_ptr_type serv)
 	: m_s(std::move(s)),
 	m_serv(serv)
 {
 	do_read();
 }
 
-ClientHandler::ClientHandler(io_context& ctx, TcpServer& serv)
+ClientHandler::ClientHandler(io_context& ctx, server_ptr_type serv)
 	: m_s(ctx),
 	m_serv(serv)
 {
@@ -34,8 +34,8 @@ void ClientHandler::handle_client(pointer_type inst,
 	if (error == error::eof || error == error::connection_reset)
 	{
 		// Handle disconnect
-		post(inst->m_serv.m_ioctx,
-			[&]() mutable { inst->m_serv.Disconnect(inst); });
+		post(inst->m_serv.lock()->m_ioctx,
+			[&]() mutable { inst->m_serv.lock()->Disconnect(inst); });
 		wcout << L"Client disconnected" << endl;
 		Logger::log("Client disconnected");
 		return;

@@ -12,11 +12,12 @@ using std::cout;
 using std::wcout;
 using std::endl;
 
-class TcpServer
+class TcpServer : public std::enable_shared_from_this<TcpServer>
 {
 public:
 	using element_type = ClientHandler::pointer_type;
 	using pointer_type = std::shared_ptr<TcpServer>;
+	// DO NOT USE: exposed for std::make_shared purposes
 	TcpServer(unsigned short port = 3030, size_t maxClients = 25,
 		size_t concurrency = 1,
 		int backlog = tcp::acceptor::max_listen_connections);
