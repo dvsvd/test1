@@ -11,6 +11,8 @@ using std::cout;
 using std::wcout;
 using std::endl;
 
+class ClientHandler;
+
 class TcpServer
 {
 public:
@@ -31,6 +33,7 @@ private:
 	std::unordered_set<ClientHandler> m_handlers;
 	thread_pool m_tp;
 	io_context m_ioctx;
+	io_context::work m_work;
 	executor_work_guard<io_context::executor_type> m_work_guard;
 	tcp::acceptor m_acceptor;
 };

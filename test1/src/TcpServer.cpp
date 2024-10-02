@@ -6,6 +6,7 @@
 TcpServer::TcpServer(unsigned short port, size_t maxClients, size_t concurrency, int backlog)
 	:	m_tp(concurrency),
 	m_ioctx(concurrency),
+	m_work(m_ioctx),
 	m_work_guard(make_work_guard(m_ioctx)),
 	m_acceptor(m_ioctx, tcp::endpoint(tcp::v4(), port)),
 	m_port(port),
@@ -28,7 +29,8 @@ void TcpServer::Run()
 			if (!ec)
 			{
 				std::unique_lock l(m_lock);
-				m_handlers.insert(ClientHandler(std::move(s)));
+				m_handlers.insert(ClientHandler(std::move(s), *this));
+				cout << "Accepted client";
 			}
 		});
 	//Logger::log("Программа приняла соединение с адреса " + tcp_socket.remote_endpoint().address().to_string());

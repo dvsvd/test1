@@ -2,17 +2,12 @@
 #include "Logger.h"
 #include "TcpServer.h"
 
-ClientHandler::ClientHandler()
-	: m_s(io_context())
-{
-
-}
-
-ClientHandler::ClientHandler(tcp::socket&& s)
-	: m_s(std::move(s))
+ClientHandler::ClientHandler(tcp::socket&& s, TcpServer& serv)
+	: m_s(std::move(s)),
+	m_serv(serv)
 {
 	// Avoid copy construct
-	m_s.async_receive(buf, std::bind(&ClientHandler::handle_client,
+	m_s.async_receive(m_buf, std::bind(&ClientHandler::handle_client,
 		this,
 		std::placeholders::_1,
 		std::placeholders::_2));
@@ -26,17 +21,20 @@ void ClientHandler::handle_client (ClientHandler* inst,
 	switch (nBytesRead)
 	{
 	case 0: // Disconnect
-		post(inst->m_s.get_executor(), std::bind(&TcpServer::Disconnect, *inst));
+	{
+		post(inst->m_serv.m_work.get_io_context(),
+			[&]() mutable { inst->m_serv.Disconnect(*inst); });
 		wcout << L"Client disconnected" << endl;
 		Logger::log("Client disconnected");
 		break;
+	}
 	case BUFLEN:
-		inst->m_msg += buffer_cast<char*>(inst->buf);
-		memset(buffer_cast<char*>(inst->buf), 0, BUFLEN);
+		inst->m_msg += buffer_cast<char*>(inst->m_buf);
+		memset(buffer_cast<char*>(inst->m_buf), 0, BUFLEN);
 		inst->isHandled = inst->m_s.available() == 0;
 		break;
 	default:
-		inst->m_msg += buffer_cast<char*>(inst->buf);
+		inst->m_msg += buffer_cast<char*>(inst->m_buf);
 		inst->isHandled = true;
 		break;
 	}
@@ -49,11 +47,11 @@ ClientHandler::~ClientHandler()
 	m_s.close();
 }
 
-bool ClientHandler::operator==(const ClientHandler& other) const
+bool operator==(const ClientHandler& lhs, const ClientHandler& rhs)
 {
-	return const_cast<ClientHandler&>(*this).m_s.native_handle() ==
-		const_cast<ClientHandler&>(other).m_s.native_handle() &&
-		this == &other;
+	return const_cast<ClientHandler&>(lhs).m_s.native_handle() ==
+		const_cast<ClientHandler&>(rhs).m_s.native_handle() &&
+		&lhs == &rhs;
 }
 
 std::size_t std::hash<ClientHandler>::operator()(const ClientHandler& key) const noexcept

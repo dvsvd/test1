@@ -17,8 +17,6 @@ Storage storage{
 /*
 *	TODO:
 *	1) MULTI-CLIENT SERVICE
-*		1.1) переделать дек в сет
-*		1.2) постить из клиентхэндлера запрос на собственное удаление
 *	2) JSON VALIDATION
 *	3) SEND RESPONSE TO CLIENT
 */
