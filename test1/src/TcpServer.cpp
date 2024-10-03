@@ -53,7 +53,6 @@ void TcpServer::Run()
 	{
 		post(m_tp, std::bind(static_cast<size_t(io_context::*)()>(&io_context::run), &m_ioctx));
 	}
-	//json request = json::parse(msg, Functions::ValidationProc);
 	Logger::log("Server Started");
 	cout << "Server successfully started on port "
 		<< m_port << " and interface "

@@ -16,3 +16,9 @@ void Localise()
 #endif // WIN32
 #endif // _UNICODE
 }
+
+uint64_t fileSize(const char* name)
+{
+	std::ifstream f(name, std::ios::ate | std::ios::binary);
+	return static_cast<uint64_t>(f.tellg());
+}

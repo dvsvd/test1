@@ -1,7 +1,5 @@
 #include "client.h"
 
-uint64_t fileSize(const char* name);
-
 int main(int argc, char** argv)
 {
 	try
@@ -17,6 +15,8 @@ int main(int argc, char** argv)
 		f.read(buf, fsize);
 		tcp_socket.send(buffer(buf, fsize));
 		cout << "Message sent!" << endl;
+		memset(buf, 0, 4096U);
+		tcp_socket.receive(buffer(buf, 4096U));
 		tcp_socket.shutdown(socket_base::shutdown_both);
 		tcp_socket.close();
 	}
@@ -25,10 +25,4 @@ int main(int argc, char** argv)
 		cout << ex.what() << endl;
 	}
 	return 0;
-}
-
-uint64_t fileSize(const char* name)
-{
-	std::ifstream f(name, std::ios::ate | std::ios::binary);
-	return static_cast<uint64_t>(f.tellg());
 }

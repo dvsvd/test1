@@ -25,7 +25,7 @@ void Logger::log(const string& str)
 
 void Logger::error(const char* str)
 {
-	static const string e("Œÿ»¡ ¿: ");
+	static const string e("ERROR: ");
 	log(e + str);
 }
 void Logger::error(const string& str)

@@ -1,20 +1,20 @@
 #include "Functions.h"
 #include "Logger.h"
 #include "ClientHandler.h"
+#include "JsonValidator.h"
 #include <exception>
 
-extern Storage storage;
-//extern thread_local 
+extern Storage g_storage;
 
-json Operations::ReadData(const std::string& key, std::string& value)
+extern const std::unordered_map<std::string, JsonValidator> g_validators;
+
+json Operations::ReadData(const json& request)
 {
 	json response;
 	try
 	{
-		//const_cast<std::string&>(value) = storage.at(key);
-		value = storage.at(key);
+		response["value"] = g_storage.at(request["key"]);
 		response["status"] = "ok";
-		response["value"] = value;
 	}
 	catch (std::out_of_range& ex)
 	{
@@ -31,12 +31,12 @@ json Operations::ReadData(const std::string& key, std::string& value)
 	return response;
 }
 
-json Operations::WriteData(const std::string& key, const std::string& value)
+json Operations::WriteData(const json& request)
 {
 	json response;
 	try
 	{
-		storage.insert_or_assign(key, value);
+		g_storage.insert_or_assign(request["key"], request["value"]);
 		response["status"] = "ok";
 	}
 	catch (std::exception& ex)
@@ -46,17 +46,4 @@ json Operations::WriteData(const std::string& key, const std::string& value)
 		response["error"] = ex.what();
 	}
 	return response;
-}
-
-bool Functions::ValidationProc(int depth, json::parse_event_t event, json& parsed)
-{
-	bool ret = false;
-	return ret;
-}
-
-void Functions::recv_handler(
-	const boost::system::error_code& error,
-	size_t nBytesRead)
-{
-
 }

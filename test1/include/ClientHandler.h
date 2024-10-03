@@ -35,6 +35,7 @@ private:
 		size_t nBytesRead
 	);
 	void do_read();
+	void send_response(const json response);
 };
 
 template <>

@@ -14,7 +14,7 @@ add_executable (test1 "${SOURCE_DIR}/test1.cpp" "${INCLUDE_DIR}/test1.h"
 	"${COMMON_INCLUDE_DIR}/CommonIncludes.h"
 	"${INCLUDE_DIR}/Storage.h" "${SOURCE_DIR}/Storage.cpp"
 	"${INCLUDE_DIR}/ClientHandler.h" "${SOURCE_DIR}/ClientHandler.cpp"
-	"${INCLUDE_DIR}/TcpServer.h" "${SOURCE_DIR}/TcpServer.cpp" )
+	"${INCLUDE_DIR}/TcpServer.h" "${SOURCE_DIR}/TcpServer.cpp"   "include/JsonValidator.h" "src/JsonValidator.cpp" )
 target_include_directories(test1 PRIVATE ${Boost_INCLUDE_DIRS} ${INCLUDE_DIR})
 
 include(FetchContent)

@@ -5,11 +5,11 @@
 
 namespace Operations
 {
-	json ReadData(const std::string& key, std::string& value);
-	json WriteData(const std::string& key, const std::string& value);
+	json ReadData(const json& request);
+	json WriteData(const json& request);
 
-	const std::map<std::string,
-		std::function<json(const std::string& key, std::string& value)>> map
+	const std::unordered_map<std::string,
+		std::function<json(const json&)>> map
 	{
 		std::make_pair("read", ReadData),
 		std::make_pair("write", WriteData)
@@ -18,18 +18,9 @@ namespace Operations
 
 namespace Functions
 {
-	bool ValidationProc(int depth, json::parse_event_t event, json& parsed);
-	//bool ValidateJSON(const json& doc, const json& schema)
-	//{
-	//	//TODO here
-	//	return true;
-	//}
-	bool isRuChar(char c);
-	void ValidateString(std::string& s);
-	std::string FormPacket(const std::string& s);
-	void Thread2Work(tcp::socket& tcp_socket);
-	void recv_handler(
-		const boost::system::error_code& error, // Result of operation.
-		std::size_t bytes_transferred // Number of bytes received.
-	);
+	// From https://ru.stackoverflow.com/a/484001
+	// FNV-1a hash, 32-bit 
+	inline constexpr std::uint32_t fnv1a(const char* str, std::uint32_t hash = 2166136261UL) {
+		return *str ? fnv1a(str + 1, (hash ^ *str) * 16777619ULL) : hash;
+	}
 };
