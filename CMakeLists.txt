@@ -10,7 +10,7 @@ set(CMAKE_DEBUG_POSTFIX d)
 set(CMAKE_CXX_STANDARD_REQUIRED 17)
 set(CMAKE_CXX_STANDARD 17)
 
-if(NOT DEFINED BOOST_ROOT)
+if(NOT BOOST_ROOT)
 	message (FATAL_ERROR "Could not find Boost. Please add \"-D BOOST_ROOT=/path/to/boost/location\" to cmake call")
 endif()
 
