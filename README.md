@@ -1,4 +1,5 @@
 ![Build](https://github.com/dvsvd/test1/actions/workflows/c-cpp.yml/badge.svg)
+
 Test assignment for Diginext application.
 
 # REQUIREMENTS
