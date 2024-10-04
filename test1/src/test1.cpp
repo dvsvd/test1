@@ -10,6 +10,7 @@
 #include <utility>
 
 std::unordered_map<std::string, JsonValidator> LoadSchemas() noexcept;
+unsigned short strtous(const char* str);
 
 Storage g_storage {
 	std::make_pair("key1", "value1"),
@@ -18,14 +19,6 @@ Storage g_storage {
 };
 
 extern const std::unordered_map<std::string, JsonValidator> g_validators = LoadSchemas();
-
-/*
-*	TODO:
-*	2) JSON PARSE
-*	3) SEND RESPONSE TO CLIENT
-*	ADDITIONAL:
-*	4) NETWORK ERRORS TRY-CATCH
-*/
 
 std::unordered_map<std::string, JsonValidator> LoadSchemas() noexcept
 {
@@ -54,13 +47,68 @@ std::unordered_map<std::string, JsonValidator> LoadSchemas() noexcept
 			std::make_pair("write", std::move(write_schema))};
 }
 
-int main()
+unsigned short strtous(const char* str)
 {
+	unsigned long ret = std::strtoul(str, nullptr, 10);
+	if (errno == ERANGE)
+		throw std::range_error(std::string("std::strtoul failed in ") + __FUNCTION__);
+	if (ret > USHRT_MAX)
+		throw std::range_error("value is out of USHORT range");
+	return (unsigned short)ret;
+}
+
+int main(int argc, char** argv)
+{
+	unsigned short port = 3333;
+	size_t maxclients = 25;
+	int backlog = tcp::acceptor::max_listen_connections;
+	size_t concurrency = std::thread::hardware_concurrency() - 1;
+	std::string cmd;
 	try
 	{
 		Localise();
-		std::shared_ptr<TcpServer> Serv = TcpServer::Create(3333, 25, std::thread::hardware_concurrency());
-		Serv->Run();
+		for (int i = 1; i < argc; i++)
+		{
+
+			if (argv[i][0] == '-') // check for an option marker
+			{
+				if (!strcmp((argv[i] + 1), "port"))
+				{
+					port = strtous(argv[++i]);
+				}
+				else if (!strcmp((argv[i] + 1), "maxclients"))
+				{
+					maxclients = std::strtoul(argv[++i], nullptr, 10);
+				}
+				else if (!strcmp((argv[i] + 1), "backlog"))
+				{
+					backlog = std::strtol(argv[++i], nullptr, 10);
+				}
+				else if (!strcmp((argv[i] + 1), "concurrency"))
+				{
+					concurrency = std::strtol(argv[++i], nullptr, 10);
+				}
+			}
+		}
+		std::shared_ptr<TcpServer> Serv = TcpServer::Create(port, maxclients, concurrency, backlog);
+		std::thread(&TcpServer::Run, Serv).detach();
+		while (true)
+		{
+			cout << ">";
+			std::getline(cin, cmd);
+			cin.clear();
+			cout.clear();
+			fflush(stdin);
+			if (cmd == "exit")
+				break;
+			else if (cmd == "get_storage")
+			{
+				for (const auto it : g_storage)
+				{
+					cout << it.first << " : " << it.second << endl;
+				}
+			}
+		}
 	}
 	catch (std::exception& ex)
 	{
