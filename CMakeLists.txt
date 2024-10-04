@@ -11,7 +11,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED 17)
 set(CMAKE_CXX_STANDARD 17)
 
 if(NOT DEFINED BOOST_ROOT)
-	set (BOOST_ROOT "C:/boost_1_79_0")
+	message (FATAL_ERROR "Could not find BOOST_ROOT. Please add \"-D BOOST_ROOT=/path/to/boost/location\" to cmake call")
 endif()
 
 set(Boost_USE_STATIC_LIBS OFF) 
@@ -22,23 +22,10 @@ if(Boost_FOUND)
 	include_directories(${Boost_INCLUDE_DIRS})
 endif()
 
-#set (BOOST_ROOT "C:/boost_1_79_0")
-#set (BOOST_INCLUDE_DIR "C:/boost_1_79_0")
-#set (BOOST_LIB_DIR "${BOOST_ROOT}/libs")
-
 set(COMMON_SOURCE_DIR "${PROJECT_SOURCE_DIR}/src")
 set(COMMON_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/include")
 
 include_directories("${PROJECT_SOURCE_DIR}/include")
-
-#set(CXX_LIB_DIR_ROOT "C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.29.30133/lib")
-#if(${CMAKE_SYSTEM_PROCESSOR} MATCHES ".*64.*")
-#	set(CXX_LIB_DIR "${CXX_LIB_DIR_ROOT}/x64")
-#	set(RUNTIME_OUTPUT_DIRECTORY "${PROJECT_OUTPUT_DIRECTORY}/x64")
-#else()
-#	set(CXX_LIB_DIR "${CXX_LIB_DIR_ROOT}/x86")
-#	set(RUNTIME_OUTPUT_DIRECTORY "${PROJECT_OUTPUT_DIRECTORY}/x86")
-#endif()
 
 if(WIN32)
 	set (CXX_STANDARD_LIBRARIES kernel32.lib user32.lib gdi32.lib

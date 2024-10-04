@@ -4,9 +4,12 @@ out/
 *CMakeFiles/
 _deps/
 
+# Intermediate files
 *.cmake
 # Prerequisites
 *.d
+*ninja*
+CMakeCache.txt
 
 # Object files
 *.o

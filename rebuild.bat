@@ -1,1 +1,0 @@
-cmake --build %1 --target clean -G %2
