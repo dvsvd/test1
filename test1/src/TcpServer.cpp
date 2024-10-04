@@ -1,5 +1,5 @@
 #include "TcpServer.h"
-#include "functions.h"
+#include "Functions.h"
 #include "Logger.h"
 #include <algorithm>
 
