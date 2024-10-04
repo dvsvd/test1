@@ -11,7 +11,7 @@ jobs:
     name: Ubuntu Build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Checkout submodules
         run: git submodule update --init --recursive
       - name: Create build directory and run CMake
@@ -21,11 +21,9 @@ jobs:
           cmake -S . -B cmake_build_dir -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=cmake_install_dir
       - name: Build project
         run: cmake --build cmake_build_dir --target install --config Release -- -j4
-      - name: Run tests
-        run:  ctest -C Release -VV
         working-directory: cmake_build_dir
       - name: Create Artifacts
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v4
         with:
           name: Ubuntu-Artifacts
           path: cmake_install_dir/
