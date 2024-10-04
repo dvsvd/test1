@@ -55,7 +55,7 @@ void ClientHandler::handle_client(pointer_type inst,
 		inst->m_msg += buffer_cast<char*>(inst->m_buf);
 		inst->isHandled = true;
 #ifdef _DEBUG
-		cout << "Read incoming message client: " << inst->m_msg << endl;
+		cout << "Read incoming client message: " << inst->m_msg << endl;
 #endif // _DEBUG
 		break;
 	}
@@ -63,20 +63,33 @@ void ClientHandler::handle_client(pointer_type inst,
 	{
 		post(inst->m_serv.lock()->m_ioctx, [msg = inst->m_msg, inst]() {
 			HANDLER_LOCATION;
-			json request = json::parse(msg), response;
-			auto validator_it = g_validators.find(request["request"]);
-			if (validator_it == g_validators.end()) {
-				// send no such schema error to client
-				response["status"] = "error";
-				response["error"] = "No such schema present";
+			json request, response;
+			try {
+				request = json::parse(msg);
+				auto validator_it = g_validators.find(request["request"]);
+				if (validator_it == g_validators.end()) {
+					// send no such schema error to client
+					response["status"] = "error";
+					response["error"] = "No such schema present";
+				}
+				if (validator_it->second.validate(request)) {
+					response = Operations::map.at(request["request"])(request);
+				}
+				else {
+					// send validation error to client
+					response["status"] = "error";
+					response["error"] = "Invalid JSON document";
+				}
 			}
-			if (validator_it->second.validate(request)) {
-				response = Operations::map.at(request["request"])(request);
-			}
-			else {
-				// send validation error to client
+			catch (const json::exception& ex) {
 				response["status"] = "error";
-				response["error"] = "Invalid JSON document";
+				response["error"] = ex.what();
+				cerr << ex.what() << endl;
+				Logger::error(ex.what());
+			}
+			catch (const std::exception& ex) {
+				cerr << ex.what() << endl;
+				Logger::error(ex.what());
 			}
 			inst->send_response(response);
 		});

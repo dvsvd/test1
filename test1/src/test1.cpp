@@ -110,7 +110,7 @@ int main(int argc, char** argv)
 			}
 		}
 	}
-	catch (std::exception& ex)
+	catch (const std::exception& ex)
 	{
 		cerr << ex.what() << endl;
 		Logger::error(ex.what());
