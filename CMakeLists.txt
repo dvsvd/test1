@@ -10,13 +10,13 @@ set(CMAKE_DEBUG_POSTFIX d)
 set(CMAKE_CXX_STANDARD_REQUIRED 17)
 set(CMAKE_CXX_STANDARD 17)
 
+if(NOT DEFINED BOOST_ROOT)
+	message (FATAL_ERROR "Could not find Boost. Please add \"-D BOOST_ROOT=/path/to/boost/location\" to cmake call")
+endif()
+
 find_package(Boost 1.79.0 REQUIRED)
 if(Boost_FOUND)
 	include_directories(${Boost_INCLUDE_DIRS})
-endif()
-
-if(NOT Boost_FOUND OR NOT DEFINED BOOST_ROOT)
-	message (FATAL_ERROR "Could not find Boost. Please add \"-D BOOST_ROOT=/path/to/boost/location\" to cmake call")
 endif()
 
 set(Boost_USE_STATIC_LIBS OFF) 
