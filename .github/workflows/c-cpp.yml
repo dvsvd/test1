@@ -11,9 +11,11 @@ jobs:
       runs-on: windows-latest
       steps:
         - uses: actions/checkout@v4
-        - uses: ilammy/msvc-dev-cmd@v1.13.0
           with:
             submodules: recursive
+        - uses: ilammy/msvc-dev-cmd@v1.13.0
+          with:
+            arch: x86
         
         - name: Install Windows boost
           uses: MarkusJx/install-boost@v2.4.5
