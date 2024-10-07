@@ -26,7 +26,7 @@ jobs:
             boost_install_dir: C:\boost_1_79_0
         # OPTIONAL: Specify an architecture
             arch: x86
-            platform_version: windows-2022
+            platform_version: 2022
             toolset: msvc14.2
             
         - name: Configure CMake
@@ -66,8 +66,13 @@ jobs:
       # OPTIONAL: Specify an architecture
           arch: x86
           platform_version: 20.04
+      
       - name: Configure CMake
         run: cmake . -DCMAKE_BUILD_TYPE=Release -B build -DCMAKE_INSTALL_PREFIX=cmake_install_dir -DBOOST_ROOT=${{ steps.install-boost.outputs.BOOST_ROOT }}
+        
+      - name: Build
+        run: make .
+        
       - name: Create Artifacts
         uses: actions/upload-artifact@v4
         with:
